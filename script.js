@@ -4,14 +4,23 @@ const loadLesson = () => {
         .then((res) => res.json())
         .then((json) => {
             displayLessons(json.data);
+           
         });
 };
+const removeActive = () =>{
+    const lessonButtons = document.querySelectorAll(".lesson-btn");
+    lessonButtons.forEach((btn) => btn.classList.remove("active"))
+}
+
 const loadLevelWord = (id) => {
 
     const url = `https://openapi.programming-hero.com/api/level/${id}`;
     fetch(url)
         .then(res => res.json())
         .then(data => {
+            removeActive();
+            const clickBtn = document.getElementById(`lesson-btn-${id}`);
+            clickBtn.classList.add("active")
             displayLevelWord(data.data);
         });
 };
@@ -19,21 +28,31 @@ const loadLevelWord = (id) => {
 const displayLevelWord = (words) => {
     const wordContainer = document.getElementById("word-container");
     wordContainer.innerHTML = "";
+    if (words == 0) {
+        wordContainer.innerHTML = `
+       
+         <div class="text-center bg-sky-200 col-span-full rounded-xl py-10 space-y-6 font-bangla">
+      <img class = "mx-auto" src="./assets/alert-error.png" >
+             <p class="text-xl font-medium text-gray-500">এই Lesson এ এখনো কোন Vocabulary যুক্ত করা হয়নি।</p>
+             <h2 class="font-bold text-4xl">নেক্সট Lesson এ যান</h2>
+        </div>`;
+        return;
+    }
     words.forEach((word) => {
         const card = document.createElement("div");
         card.innerHTML = `
          
      <div class="bg-white rounded-md text-center shadow-md py-10 px-5 space-y-4">
-        <h2 class="font-bold text-2xl">${word.word}</h2>
+        <h2 class="font-bold text-2xl">${word.word ? word.word : "No Bangla meaning is available for this word."}</h2>
         <p class="font-semibold">meaning or pronounciation</p>
-        <div class="text-2xl font-medium font-bangla">" ${word.meaning} /${word.pronounciation}"</div> 
+        <div class="text-2xl font-medium font-bangla">" ${word.meaning ? word.meaning : "there is no available meaning in this word"} /${word.pronounciation ? word.pronounciation : "there is no pronounciation in this word"}"</div> 
         <div class="flex justify-between items-center">
-            <button class="btn bg-[#1a91ff10]  hover:bg-[#1a91ff90]"><i class="fa-solid fa-circle-info"></i></button>
+            <button onclick ="my_modal_5.showModal()" class="btn bg-[#1a91ff10]  hover:bg-[#1a91ff90]"><i class="fa-solid fa-circle-info"></i></button>
             <button class="btn  bg-[#1a91ff10] hover:bg-[#1a91ff90]"><i class="fa-solid fa-volume-high"></i></button>
         </div>
      </div>
         `
-wordContainer.append(card)
+        wordContainer.append(card)
     });
 };
 
@@ -45,12 +64,11 @@ const displayLessons = (lessons) => {
         console.log(lesson);
         const btnDiv = document.createElement("div")
         btnDiv.innerHTML = `
-                            <button onclick="loadLevelWord(${lesson.level_no})" class="btn btn-outline btn-primary ">
-                                <i class="fa-brands fa-leanpub"></i> Lesson${lesson.level_no}
-            
-        
-                             </button>   
-                             `
+<button id="lesson-btn-${lesson.level_no}" onclick="loadLevelWord(${lesson.level_no})" class="btn btn-outline btn-primary lesson-btn">
+<i class="fa-brands fa-leanpub"></i> Lesson ${lesson.level_no}
+</button>
+`;
+
         levelContainer.append(btnDiv);
     }
 
