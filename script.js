@@ -1,3 +1,10 @@
+const createElement = (arr) =>{
+    const htmlElements = arr.map(el=> `<span class = "btn"> ${el} </span>`);
+    return(htmlElements.join(" "));
+
+}
+
+
 const loadLesson = () => {
     const url = "https://openapi.programming-hero.com/api/levels/all";
     fetch(url)    //promise to response
@@ -24,6 +31,7 @@ const loadLevelWord = (id) => {
             displayLevelWord(data.data);
         });
 };
+
 const loadWordDetail = async(id) =>{
     const url = `https://openapi.programming-hero.com/api/word/${id}`;
     const res = await fetch(url);
@@ -51,9 +59,7 @@ const displayWordDetails = (word) =>{
 
         <div>
           <h2 class="font-bold">Synonym</h2>
-          <span class="btn">syn1</span>
-          <span class="btn">syn1</span>
-          <span class="btn">syn1</span>
+        <div class = "">${createElement(word.synonym)} </div>
         </div>
      
      ` ;
